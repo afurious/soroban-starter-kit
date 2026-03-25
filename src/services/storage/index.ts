@@ -57,7 +57,7 @@ class StorageService {
   // ── Balances ──────────────────────────────────────────────────────────────
 
   async saveBalance(balance: Balance): Promise<void> {
-    return withDBError(() => this.conn.put('balances', { ...balance, lastUpdated: Date.now() }));
+    await withDBError(() => this.conn.put('balances', { ...balance, lastUpdated: Date.now() }));
   }
 
   async getBalance(address: string, contractId: string): Promise<Balance | undefined> {
@@ -75,7 +75,7 @@ class StorageService {
   // ── Escrows ───────────────────────────────────────────────────────────────
 
   async saveEscrow(escrow: EscrowData): Promise<void> {
-    return withDBError(() => this.conn.put('escrows', { ...escrow, lastUpdated: Date.now() }));
+    await withDBError(() => this.conn.put('escrows', { ...escrow, lastUpdated: Date.now() }));
   }
 
   async getEscrow(id: string): Promise<EscrowData | undefined> {
@@ -93,7 +93,7 @@ class StorageService {
   // ── Transactions ──────────────────────────────────────────────────────────
 
   async savePendingTransaction(tx: CachedTransaction): Promise<void> {
-    return withDBError(() => this.conn.put('pendingTransactions', tx));
+    await withDBError(() => this.conn.put('pendingTransactions', tx));
   }
 
   async getPendingTransactions(): Promise<CachedTransaction[]> {
@@ -105,7 +105,7 @@ class StorageService {
   }
 
   async deletePendingTransaction(id: string): Promise<void> {
-    return withDBError(() => this.conn.delete('pendingTransactions', id));
+    await withDBError(() => this.conn.delete('pendingTransactions', id));
   }
 
   async markTransactionSynced(tx: CachedTransaction): Promise<void> {
@@ -123,7 +123,7 @@ class StorageService {
   // ── Preferences ───────────────────────────────────────────────────────────
 
   async savePreferences(prefs: UserPreferences): Promise<void> {
-    return withDBError(() => this.conn.put('preferences', prefs));
+    await withDBError(() => this.conn.put('preferences', prefs));
   }
 
   async getPreferences(id: string): Promise<UserPreferences | undefined> {
@@ -133,7 +133,7 @@ class StorageService {
   // ── Users ─────────────────────────────────────────────────────────────────
 
   async saveUser(user: UserRecord): Promise<void> {
-    return withDBError(() => this.conn.put('users', user));
+    await withDBError(() => this.conn.put('users', user));
   }
 
   async getUserByAddress(address: string): Promise<UserRecord | undefined> {
@@ -147,7 +147,7 @@ class StorageService {
   // ── Settings ──────────────────────────────────────────────────────────────
 
   async setSetting(key: string, value: unknown): Promise<void> {
-    return withDBError(() =>
+    await withDBError(() =>
       this.conn.put('settings', { key, value, updatedAt: Date.now() })
     );
   }
@@ -163,7 +163,7 @@ class StorageService {
 
   async setCache(key: string, data: unknown, ttlSeconds = 3600): Promise<void> {
     const now = Date.now();
-    return withDBError(() =>
+    await withDBError(() =>
       this.conn.put('cache', { data, timestamp: now, expiresAt: now + ttlSeconds * 1000 }, key)
     );
   }
